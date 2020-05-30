@@ -101,7 +101,7 @@ public abstract class ZipFileSystem
     {
         Objects.requireNonNull(path, "ZipFileSystem.open: path is null");
 
-        FileSystem fileSystem = FileSystems.newFileSystem(path, null);
+        FileSystem fileSystem = FileSystems.newFileSystem(path);
 
         return fileSystem.getPath(fileSystem.getSeparator());
     }
