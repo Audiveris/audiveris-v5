@@ -289,7 +289,11 @@ public abstract class Versions
     public static void poll (boolean manual)
     {
         final GHRelease latest = getLatestRelease();
-        final Version latestVersion = new Version(latest.getTagName());
+        String tagName = latest.getTagName();
+        if(tagName.startsWith("v"))
+            tagName = tagName.substring(1);
+
+        final Version latestVersion = new Version(tagName);
 
         if (Versions.CURRENT_SOFTWARE.compareTo(latestVersion) < 0) {
             logger.info("A new software release is available: {}", latestVersion);
