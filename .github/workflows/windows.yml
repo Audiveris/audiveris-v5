@@ -1,0 +1,42 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Build Windows installer
+
+on: 
+  push:
+    branches:
+      - development
+  pull_request:
+    branches: 
+      - development
+
+jobs:
+  build:
+
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        # Try different JDK versions
+        java: [ 11 ]
+    name: Java ${{ matrix.java }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+
+    - name: Get tesseract data
+      run:  |
+        mkdir "C:\Program Files (x86)\tesseract-ocr\tessdata"
+        curl -L https://github.com/tesseract-ocr/tessdata/blob/3.04.00/eng.traineddata -o "C:\Program Files (x86)\tesseract-ocr\tessdata\eng.traineddata"
+
+    - name: Build with Gradle
+      run: ./gradlew installers
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: installers
+        path: build/installers/*.exe

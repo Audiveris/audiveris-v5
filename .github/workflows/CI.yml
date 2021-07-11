@@ -1,0 +1,46 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on: 
+  push:
+    branches:
+      - development
+  pull_request:
+    branches: 
+      - development
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        # test against different JDK versions
+        java: [11 ]
+    name: JDK ${{ matrix.java }}
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+    
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    
+    - name: Build with Gradle
+      run: ./gradlew build
+      
+    - uses: actions/upload-artifact@v2
+      with:
+        name: tar_archive
+        path: build/distributions/Audiveris.tar
+        
+    - uses: actions/upload-artifact@v2
+      with:
+        name: zip_archive
+        path: build/distributions/Audiveris.zip
